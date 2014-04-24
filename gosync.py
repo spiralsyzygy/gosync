@@ -8,7 +8,7 @@ Arguments:
     REMOTEENDPOINT   Remote end point.
     LOCALPATH        The local path to sync from.
     REMOTEPATH       The remote path to sync to.
-    OAUTHTOKEN       Globus Online OAuth token string.
+    OAUTHTOKEN       Globus Online OAuth token file.
 
 Options:
     -h --help           show this help.
@@ -67,12 +67,18 @@ if __name__ == '__main__':
     local_dir = options['LOCALPATH']
     remote_ep = options['REMOTEENDPOINT']
     remote_dir = options['REMOTEPATH']
-    oauthtoken = options['OAUTHTOKEN']
+    oauthtokenfile = options['OAUTHTOKEN']
     
+    if os.path.exists(oauthtokenfile):
+        authfile = open(oauthtokenfile, 'r')
+        auth = authfile.readlines()
+        goauth = auth[0].rstrip('\n')
+
+
     logging.debug('Running gosync.py with the following options:')
     logging.debug(options)
 
-    api = TransferAPIClient(username, goauth=oauthtoken, httplib_debuglevel=1, max_attempts=5)
+    api = TransferAPIClient(username, goauth=goauth, httplib_debuglevel=1, max_attempts=5)
     logging.debug('Client created:')
     logging.debug(api)
     
